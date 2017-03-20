@@ -1,0 +1,23 @@
+{
+  "name": "thaiphan/magento2-s3",
+  "description": "Use Amazon S3 as the file storage backend for your store.",
+  "type": "magento2-module",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thai Phan",
+      "email": "thai@outlook.com"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Thai\\S3\\": ""
+    }
+  },
+  "require": {
+    "aws/aws-sdk-php": "3.x"
+  }
+}

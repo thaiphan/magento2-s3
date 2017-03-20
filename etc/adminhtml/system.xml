@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="thai_extensions" sortOrder="4000000">
+            <label>Thai's Extensions</label>
+        </tab>
+        <section id="thai_s3" type="text" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>S3</label>
+            <tab>thai_extensions</tab>
+            <resource>Thai_S3::config_s3</resource>
+            <group id="general" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="access_key" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Access Key</label>
+                </field>
+                <field id="secret_key" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Secret Key</label>
+                </field>
+                <field id="bucket" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Bucket</label>
+                </field>
+                <field id="region" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Region</label>
+                    <source_model>Thai\S3\Model\Config\Source\Region</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

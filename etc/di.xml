@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Cms\Model\Wysiwyg\Images\Storage">
+        <plugin name="thai_s3_model_cms_wysiwyg_images_storage_plugin" type="Thai\S3\Model\Cms\Wysiwyg\Images\Storage\Plugin" />
+    </type>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="s3ConfigListCommand" xsi:type="object">Thai\S3\Console\Command\ConfigListCommand</item>
+                <item name="s3ConfigSetCommand" xsi:type="object">Thai\S3\Console\Command\ConfigSetCommand</item>
+                <item name="s3StorageDisableCommand" xsi:type="object">Thai\S3\Console\Command\StorageDisableCommand</item>
+                <item name="s3StorageEnableCommand" xsi:type="object">Thai\S3\Console\Command\StorageEnableCommand</item>
+                <item name="s3StorageExportCommand" xsi:type="object">Thai\S3\Console\Command\StorageExportCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\MediaStorage\Block\System\Config\System\Storage\Media\Synchronize">
+        <plugin name="thai_s3_block_mediastorage_system_config_system_storage_media_synchronise_plugin" type="Thai\S3\Block\MediaStorage\System\Config\System\Storage\Media\Synchronise\Plugin" />
+    </type>
+    <type name="Magento\MediaStorage\Helper\File\Storage\Database">
+        <plugin name="thai_s3_helper_mediastorage_file_storage_database_plugin" type="Thai\S3\Helper\MediaStorage\File\Storage\Database\Plugin" />
+    </type>
+    <type name="Magento\MediaStorage\Model\Config\Source\Storage\Media\Storage">
+        <plugin name="thai_s3_model_mediastorage_config_source_storage_media_storage_plugin" type="Thai\S3\Model\MediaStorage\Config\Source\Storage\Media\Storage\Plugin" />
+    </type>
+    <type name="Magento\MediaStorage\Model\File\Storage">
+        <plugin name="thai_s3_model_mediastorage_file_storage_plugin" type="Thai\S3\Model\MediaStorage\File\Storage\Plugin" />
+    </type>
+    <type name="\Magento\MediaStorage\Model\File\Storage\Database">
+        <plugin name="thai_s3_model_mediastorage_file_storage_database_plugin" type="Thai\S3\Model\MediaStorage\File\Storage\Database\Plugin" />
+    </type>
+    <type name="\Magento\MediaStorage\Model\File\Storage\Directory\Database">
+        <plugin name="thai_s3_model_mediastorage_file_storage_directory_database_plugin" type="Thai\S3\Model\MediaStorage\File\Storage\Directory\Database\Plugin" />
+    </type>
+    <type name="Magento\MediaStorage\Model\File\Storage\Synchronization">
+        <plugin name="thai_s3_model_mediastorage_file_storage_synchronisation_plugin" type="Thai\S3\Model\MediaStorage\File\Storage\Synchronisation\Plugin" />
+    </type>
+    <type name="Magento\ProductVideo\Controller\Adminhtml\Product\Gallery\RetrieveImage">
+        <arguments>
+            <!-- We need to upload the temporary product video thumbnails to S3 -->
+            <argument name="fileUtility" xsi:type="object">Thai\S3\Model\ResourceModel\MediaStorage\File\Storage\File</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Store\Model\Store">
+        <plugin name="thai_s3_model_store_store_plugin" type="Thai\S3\Model\Store\Store\Plugin" />
+    </type>
+</config>
