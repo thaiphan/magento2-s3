@@ -44,4 +44,7 @@
     <type name="Magento\Store\Model\Store">
         <plugin name="thai_s3_model_store_store_plugin" type="Thai\S3\Model\Store\Store\Plugin" />
     </type>
+    <type name="Magento\Swatches\Helper\Media">
+        <plugin name="thai_s3_helper_swatches_media_plugin" type="Thai\S3\Helper\Swatches\Media\Plugin" />
+    </type>
 </config>
