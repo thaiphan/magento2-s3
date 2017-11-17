@@ -1,6 +1,8 @@
 Thai's S3 Extension for Magento 2
 =================================
 
+[![Total Downloads](https://img.shields.io/packagist/dt/thaiphan/magento2-s3.svg?style=flat)](https://packagist.org/packages/thaiphan/magento2-s3)
+
 Thai's S3 extension for Magento 2 allows retailers to upload their catalogue and WYSIWYG images straight to Amazon S3.
 
 Benefits
