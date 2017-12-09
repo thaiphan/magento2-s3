@@ -57,4 +57,4 @@ I recommend taking a backup of your media files when switching file storage syst
 Success Stories
 ---------------
 
-Are you a happy user of my extension? I would love to feature you! [Create a GitHub issue](https://github.com/thaiphan/magento-s3/issues/new) or [send me an email](mailto:thai@outlook.com) to discuss opportunities for cross promotion!
+Are you a happy user of my extension? I would love to feature you! [Create a GitHub issue](https://github.com/thaiphan/magento2-s3/issues/new) or [send me an email](mailto:thai@outlook.com) to discuss opportunities for cross promotion!
