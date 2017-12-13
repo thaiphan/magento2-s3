@@ -50,6 +50,13 @@ FAQs
 
 No, the S3 extension only syncs across the media folder. You will need to find an alternative solution to store your log files.
 
+### Magento is still loading images from the file system! What went wrong?
+
+The S3 extension is built on top of the database file storage, which will re-download files back onto the file system as part of a caching mechanism. Magento will then use this cached version of the image instead of using S3.
+
+If you have enabled S3 integration then you can safely delete the images off your file system **(although please take a backup just in case)**. If you want Magento to not download files to the file system, you can configure your static media URL to point to S3 or CloudFront.
+
+
 ### We did something wrong and all our images are gone! Can you restore it?
 
 I recommend taking a backup of your media files when switching file storage systems. Unfortunately, there's nothing I can do if you somehow accidentally delete them.
