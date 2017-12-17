@@ -79,7 +79,9 @@ class StorageExportCommand extends \Symfony\Component\Console\Command\Command
         $offset = 0;
         while (($files = $sourceModel->exportFiles($offset, 1)) !== false) {
             foreach ($files as $file) {
-                $output->writeln(sprintf('Uploading %s to use S3.', $file['directory'] . '/' . $file['filename']));
+                $object = ltrim($file['directory'] . '/' . $file['filename'], '/');
+
+                $output->writeln(sprintf('Uploading %s to use S3.', $object));
             }
             $destinationModel->importFiles($files);
             $offset += count($files);
