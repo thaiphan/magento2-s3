@@ -39,6 +39,10 @@ class S3
                 'label' => 'EU (Ireland)'
             ],
             [
+                'value' => 'eu-west-2',
+                'label' => 'EU (London)'
+            ],
+            [
                 'value' => 'eu-central-1',
                 'label' => 'EU (Frankfurt)'
             ],
