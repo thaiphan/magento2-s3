@@ -41,7 +41,7 @@ Support
 
 There's a [Troubleshooting](https://github.com/thaiphan/magento2-s3/wiki/Troubleshooting) page on the wiki that I'll try and keep up to date with any issues that the community might have with the extension.
 
-If you can't find the answer you're looking for, however, feel free to [create a GitHub issue](https://github.com/thaiphan/magento2-s3/issues/new) or [send us an email](mailto:thai@outlook.com) for support regarding this extension.
+If you can't find the answer you're looking for, however, feel free to [create a GitHub issue](https://github.com/thaiphan/magento2-s3/issues/new) for support regarding this extension.
 
 FAQs
 ----
