@@ -34,6 +34,14 @@ class ConfigSetCommand extends \Symfony\Component\Console\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        try {
+            $this->state->setAreaCode('adminhtml');
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            // intentionally left empty
+        }
+
+        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
+
         if (!$input->getOption('region') && !$input->getOption('bucket') && !$input->getOption('secret-key') && !$input->getOption('access-key-id')) {
             $output->writeln($this->getSynopsis());
             return;
@@ -45,30 +53,27 @@ class ConfigSetCommand extends \Symfony\Component\Console\Command\Command
             return;
         }
 
-        $this->state->setAreaCode('adminhtml');
         $config = $this->configFactory->create();
 
-        if (!empty($input->getOption('access-key-id'))) {
-            $config->setDataByPath('thai_s3/general/access_key', $input->getOption('access-key-id'));
-            $config->save();
-        }
-
-        if (!empty($input->getOption('secret-key'))) {
-            $config->setDataByPath('thai_s3/general/secret_key', $input->getOption('secret-key'));
-            $config->save();
-        }
-
-        if (!empty($input->getOption('bucket'))) {
-            $config->setDataByPath('thai_s3/general/bucket', $input->getOption('bucket'));
-            $config->save();
-        }
-
-        if (!empty($input->getOption('region'))) {
-            $config->setDataByPath('thai_s3/general/region', $input->getOption('region'));
-            $config->save();
+        foreach ($this->getOptions() as $option => $pathValue) {
+            if ( ! empty($input->getOption($option))) {
+                $config->setDataByPath('thai_s3/general/'.$pathValue, $input->getOption($option));
+                $config->save();
+            }
         }
 
         $output->writeln('<info>You have successfully updated your S3 credentials.</info>');
+    }
+
+    public function getOptions()
+    {
+        return [
+            'access-key-id' => 'access_key',
+            'secret-key'    => 'secret_key',
+            'bucket'        => 'bucket',
+            'region'        => 'region',
+            'endpoint'      => 'endpoint'
+        ];
     }
 
     public function getOptionsList()
@@ -77,7 +82,8 @@ class ConfigSetCommand extends \Symfony\Component\Console\Command\Command
             new InputOption('access-key-id', null, InputOption::VALUE_OPTIONAL, 'a valid AWS access key ID'),
             new InputOption('secret-key', null, InputOption::VALUE_OPTIONAL, 'a valid AWS secret access key'),
             new InputOption('bucket', null, InputOption::VALUE_OPTIONAL, 'an S3 bucket name'),
-            new InputOption('region', null, InputOption::VALUE_OPTIONAL, 'an S3 region, e.g. us-east-1')
+            new InputOption('region', null, InputOption::VALUE_OPTIONAL, 'an S3 region, e.g. us-east-1'),
+            new InputOption('endpoint', null, InputOption::VALUE_OPTIONAL, 'an S3 endpoint, e.g. https://nyc3.digitaloceanspaces.com'),
         ];
     }
 

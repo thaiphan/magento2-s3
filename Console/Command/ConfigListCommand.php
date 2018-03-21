@@ -28,7 +28,14 @@ class ConfigListCommand extends \Symfony\Component\Console\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->state->setAreaCode('adminhtml');
+        try {
+            $this->state->setAreaCode('adminhtml');
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            // intentionally left empty
+        }
+
+        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
+
         $config = $this->configFactory->create();
         $output->writeln('Here are your AWS credentials.');
         $output->writeln('');
@@ -36,5 +43,6 @@ class ConfigListCommand extends \Symfony\Component\Console\Command\Command
         $output->writeln(sprintf('Secret Access Key: %s', $config->getConfigDataValue('thai_s3/general/secret_key')));
         $output->writeln(sprintf('Bucket:            %s', $config->getConfigDataValue('thai_s3/general/bucket')));
         $output->writeln(sprintf('Region:            %s', $config->getConfigDataValue('thai_s3/general/region')));
+        $output->writeln(sprintf('Region:            %s', $config->getConfigDataValue('thai_s3/general/endpoint')));
     }
 }

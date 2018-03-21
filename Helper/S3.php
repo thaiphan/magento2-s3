@@ -90,6 +90,10 @@ class S3
                 'value' => 'us-west-2',
                 'label' => 'US West (Oregon)'
             ],
+            [
+                'value' => 'ams3',
+                'label' => 'EU (Amsterdam)'
+            ]
         ];
     }
 }
