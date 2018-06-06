@@ -23,6 +23,11 @@
                     <label>Region</label>
                     <source_model>Thai\S3\Model\Config\Source\Region</source_model>
                 </field>
+                <field id="custom_headers" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom Headers</label>
+                    <frontend_model>Thai\S3\Block\Adminhtml\Form\Field\Headers</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
             </group>
         </section>
     </system>
