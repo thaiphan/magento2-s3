@@ -216,16 +216,13 @@ class S3 extends DataObject
     {
         $file = $this->mediaHelper->collectFileInfo($this->getMediaBaseDirectory(), $filename);
 
-        try {
-            $this->client->putObject([
-                'ACL' => 'public-read',
-                'Body' => $file['content'],
-                'Bucket' => $this->getBucket(),
-                'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
-                'Key' => $filename
-            ]);
-        } catch (\Exception $e) {
-        }
+        $this->client->putObject([
+            'ACL' => 'public-read',
+            'Body' => $file['content'],
+            'Bucket' => $this->getBucket(),
+            'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
+            'Key' => $filename
+        ]);
 
         return $this;
     }
@@ -237,34 +234,30 @@ class S3 extends DataObject
 
     public function copyFile($oldFilePath, $newFilePath)
     {
-        try {
-            $this->client->copyObject([
-                'Bucket' => $this->getBucket(),
-                'Key' => $newFilePath,
-                'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-                'ACL' => 'public-read'
-            ]);
-        } catch (S3Exception $e) {
-        }
+        $this->client->copyObject([
+            'Bucket' => $this->getBucket(),
+            'Key' => $newFilePath,
+            'CopySource' => $this->getBucket() . '/' . $oldFilePath,
+            'ACL' => 'public-read'
+        ]);
+
         return $this;
     }
 
     public function renameFile($oldFilePath, $newFilePath)
     {
-        try {
-            $this->client->copyObject([
-                'Bucket' => $this->getBucket(),
-                'Key' => $newFilePath,
-                'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-                'ACL' => 'public-read'
-            ]);
+        $this->client->copyObject([
+            'Bucket' => $this->getBucket(),
+            'Key' => $newFilePath,
+            'CopySource' => $this->getBucket() . '/' . $oldFilePath,
+            'ACL' => 'public-read'
+        ]);
 
-            $this->client->deleteObject([
-                'Bucket' => $this->getBucket(),
-                'Key' => $oldFilePath
-            ]);
-        } catch (S3Exception $e) {
-        }
+        $this->client->deleteObject([
+            'Bucket' => $this->getBucket(),
+            'Key' => $oldFilePath
+        ]);
+
         return $this;
     }
 
@@ -276,13 +269,10 @@ class S3 extends DataObject
      */
     public function deleteFile($path)
     {
-        try {
-            $this->client->deleteObject([
-                'Bucket' => $this->getBucket(),
-                'Key' =>  $path
-            ]);
-        } catch (S3Exception $e) {
-        }
+        $this->client->deleteObject([
+            'Bucket' => $this->getBucket(),
+            'Key' => $path
+        ]);
 
         return $this;
     }
