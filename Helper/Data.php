@@ -41,6 +41,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->getValue('thai_s3/general/bucket');
     }
 
+    public function getExpires()
+    {
+        return $this->scopeConfig->getValue('thai_s3/headers/expires');
+    }
+
+    public function getCacheControl()
+    {
+        return $this->scopeConfig->getValue('thai_s3/headers/cache_control');
+    }
+
     public function getCustomHeaders()
     {
         return $this->scopeConfig->getValue('thai_s3/headers/custom_headers');

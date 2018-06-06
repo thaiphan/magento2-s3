@@ -203,14 +203,12 @@ class S3 extends DataObject
     {
         foreach ($files as $file) {
             try {
-                $this->client->putObject([
-                    'ACL' => 'public-read',
+                $this->client->putObject($this->getAllParams([
                     'Body' => $file['content'],
                     'Bucket' => $this->getBucket(),
                     'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
                     'Key' => $file['directory'] . '/' . $file['filename'],
-                    'Metadata' => $this->getMetadata(),
-                ]);
+                ]));
             } catch (\Exception $e) {
                 $this->errors[] = $e->getMessage();
                 $this->logger->critical($e);
@@ -224,16 +222,34 @@ class S3 extends DataObject
     {
         $file = $this->mediaHelper->collectFileInfo($this->getMediaBaseDirectory(), $filename);
 
-        $this->client->putObject([
-            'ACL' => 'public-read',
+        $this->client->putObject($this->getAllParams([
             'Body' => $file['content'],
             'Bucket' => $this->getBucket(),
             'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
             'Key' => $filename,
-            'Metadata' => $this->getMetadata(),
-        ]);
+        ]));
 
         return $this;
+    }
+
+    public function getAllParams(array $headers = [])
+    {
+        $headers['ACL'] = 'public-read';
+
+        $metadata = $this->getMetadata();
+        if (count($metadata) > 0) {
+            $headers['Metadata'] = $metadata;
+        }
+
+        if ($this->helper->getExpires()) {
+            $headers['Expires'] = $this->helper->getExpires();
+        }
+
+        if ($this->helper->getCacheControl()) {
+            $headers['CacheControl'] = $this->helper->getCacheControl();
+        }
+
+        return $headers;
     }
 
     public function getMetadata()
@@ -258,26 +274,22 @@ class S3 extends DataObject
 
     public function copyFile($oldFilePath, $newFilePath)
     {
-        $this->client->copyObject([
+        $this->client->copyObject($this->getAllParams([
             'Bucket' => $this->getBucket(),
             'Key' => $newFilePath,
             'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-            'ACL' => 'public-read',
-            'Metadata' => $this->getMetadata(),
-        ]);
+        ]));
 
         return $this;
     }
 
     public function renameFile($oldFilePath, $newFilePath)
     {
-        $this->client->copyObject([
+        $this->client->copyObject($this->getAllParams([
             'Bucket' => $this->getBucket(),
             'Key' => $newFilePath,
             'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-            'ACL' => 'public-read',
-            'Metadata' => $this->getMetadata(),
-        ]);
+        ]));
 
         $this->client->deleteObject([
             'Bucket' => $this->getBucket(),
