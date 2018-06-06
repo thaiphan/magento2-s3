@@ -63,14 +63,20 @@ class S3 extends DataObject
         $this->logger = $logger;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(\Magento\Framework\Serialize\Serializer\Json::class);
 
-        $this->client = new \Aws\S3\S3Client([
+        $options = [
             'version' => 'latest',
             'region' => $this->helper->getRegion(),
             'credentials' => [
                 'key' => $this->helper->getAccessKey(),
                 'secret' => $this->helper->getSecretKey()
             ]
-        ]);
+        ];
+
+        if ( ! empty($this->helper->getEndpoint())) {
+            $options['endpoint'] = $this->helper->getEndpoint();
+        }
+
+        $this->client = new \Aws\S3\S3Client($options);
     }
 
     /**

@@ -42,21 +42,35 @@ class StorageExportCommand extends \Symfony\Component\Console\Command\Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        try {
+            $this->state->setAreaCode('adminhtml');
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            // intentionally left empty
+        }
+
+        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
+
         $errors = $this->validate($input);
         if ($errors) {
             $output->writeln('<error>' . implode('</error>' . PHP_EOL .  '<error>', $errors) . '</error>');
             return;
         }
 
+        $options = [
+            'version' => 'latest',
+            'region' => $this->helper->getRegion(),
+            'credentials' => [
+                'key' => $this->helper->getAccessKey(),
+                'secret' => $this->helper->getSecretKey()
+            ]
+        ];
+
+        if ( ! empty($this->helper->getEndpoint())) {
+            $options['endpoint'] = $this->helper->getEndpoint();
+        }
+
         try {
-            $this->client = new \Aws\S3\S3Client([
-                'version' => 'latest',
-                'region' => $this->helper->getRegion(),
-                'credentials' => [
-                    'key' => $this->helper->getAccessKey(),
-                    'secret' => $this->helper->getSecretKey()
-                ]
-            ]);
+            $this->client = new \Aws\S3\S3Client($options);
         } catch (\Exception $e) {
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             return;
