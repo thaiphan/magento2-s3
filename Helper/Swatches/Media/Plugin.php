@@ -76,8 +76,8 @@ class Plugin
             foreach ($this->swatchImageTypes as $swatchType) {
                 $imageConfig = $subject->getImageConfig();
                 $fileName = $this->prepareFileName($imageUrl);
-                $poo = $subject->getSwatchCachePath($swatchType) . $subject->getFolderNameSize($swatchType, $imageConfig) . $fileName['path'] . '/' . $fileName['name'];
-                $this->fileStorageDb->saveFile($poo);
+                $swatchPath = $subject->getSwatchCachePath($swatchType) . $subject->getFolderNameSize($swatchType, $imageConfig) . $fileName['path'] . '/' . $fileName['name'];
+                $this->fileStorageDb->saveFile($swatchPath);
             }
 
             return $result;
