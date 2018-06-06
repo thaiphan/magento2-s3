@@ -43,6 +43,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getCustomHeaders()
     {
-        return $this->scopeConfig->getValue('thai_s3/general/custom_headers');
+        return $this->scopeConfig->getValue('thai_s3/headers/custom_headers');
     }
 }

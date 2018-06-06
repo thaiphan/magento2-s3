@@ -23,10 +23,20 @@
                     <label>Region</label>
                     <source_model>Thai\S3\Model\Config\Source\Region</source_model>
                 </field>
-                <field id="custom_headers" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            </group>
+            <group id="headers" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Headers</label>
+                <field id="cache_control" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cache-Control</label>
+                </field>
+                <field id="expires" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Expires</label>
+                </field>
+                <field id="custom_headers" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Custom Headers</label>
                     <frontend_model>Thai\S3\Block\Adminhtml\Form\Field\Headers</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Your header will be prepended with the x-amz-meta- prefix.</comment>
                 </field>
             </group>
         </section>
