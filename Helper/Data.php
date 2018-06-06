@@ -40,4 +40,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->scopeConfig->getValue('thai_s3/general/bucket');
     }
+
+    public function getCustomHeaders()
+    {
+        return $this->scopeConfig->getValue('thai_s3/general/custom_headers');
+    }
 }

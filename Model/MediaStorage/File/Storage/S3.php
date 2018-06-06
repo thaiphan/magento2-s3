@@ -41,13 +41,19 @@ class S3 extends DataObject
      */
     private $logger;
 
+    /**
+     * @var \Magento\Framework\Serialize\SerializerInterface
+     */
+    private $serializer;
+
     private $objects = [];
 
     public function __construct(
         \Thai\S3\Helper\Data $helper,
         \Magento\MediaStorage\Helper\File\Media $mediaHelper,
         \Magento\MediaStorage\Helper\File\Storage\Database $storageHelper,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Serialize\Serializer\Json $serializer
     ) {
         parent::__construct();
 
@@ -55,6 +61,7 @@ class S3 extends DataObject
         $this->mediaHelper = $mediaHelper;
         $this->storageHelper = $storageHelper;
         $this->logger = $logger;
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(\Magento\Framework\Serialize\Serializer\Json::class);
 
         $this->client = new \Aws\S3\S3Client([
             'version' => 'latest',
@@ -201,7 +208,8 @@ class S3 extends DataObject
                     'Body' => $file['content'],
                     'Bucket' => $this->getBucket(),
                     'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
-                    'Key' => $file['directory'] . '/' . $file['filename']
+                    'Key' => $file['directory'] . '/' . $file['filename'],
+                    'Metadata' => $this->getMetadata(),
                 ]);
             } catch (\Exception $e) {
                 $this->errors[] = $e->getMessage();
@@ -221,10 +229,26 @@ class S3 extends DataObject
             'Body' => $file['content'],
             'Bucket' => $this->getBucket(),
             'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
-            'Key' => $filename
+            'Key' => $filename,
+            'Metadata' => $this->getMetadata(),
         ]);
 
         return $this;
+    }
+
+    public function getMetadata()
+    {
+        $meta = [];
+
+        $headers = $this->helper->getCustomHeaders();
+        if ($headers) {
+            $unserializedHeaders = $this->serializer->unserialize($headers);
+            foreach ($unserializedHeaders as $header) {
+                $meta[$header['header']] = $header['value'];
+            }
+        }
+
+        return $meta;
     }
 
     public function fileExists($filename)
@@ -238,7 +262,8 @@ class S3 extends DataObject
             'Bucket' => $this->getBucket(),
             'Key' => $newFilePath,
             'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-            'ACL' => 'public-read'
+            'ACL' => 'public-read',
+            'Metadata' => $this->getMetadata(),
         ]);
 
         return $this;
@@ -250,7 +275,8 @@ class S3 extends DataObject
             'Bucket' => $this->getBucket(),
             'Key' => $newFilePath,
             'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-            'ACL' => 'public-read'
+            'ACL' => 'public-read',
+            'Metadata' => $this->getMetadata(),
         ]);
 
         $this->client->deleteObject([
