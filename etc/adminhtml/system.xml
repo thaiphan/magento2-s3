@@ -24,7 +24,27 @@
                     <source_model>Thai\S3\Model\Config\Source\Region</source_model>
                 </field>
             </group>
-            <group id="headers" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="custom_endpoint" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Custom Endpoint</label>
+                <field id="enabled" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="url" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>URL</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="region" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Region</label>
+                    <comment>This overrides the Region setting you've selected in the General group.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="headers" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Headers</label>
                 <field id="cache_control" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cache-Control</label>
