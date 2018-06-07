@@ -8,6 +8,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="s3ConfigListCommand" xsi:type="object">Thai\S3\Console\Command\ConfigListCommand</item>
                 <item name="s3ConfigSetCommand" xsi:type="object">Thai\S3\Console\Command\ConfigSetCommand</item>
+                <item name="s3CustomEndpointDisableCommand" xsi:type="object">Thai\S3\Console\Command\CustomEndpointDisableCommand</item>
                 <item name="s3StorageDisableCommand" xsi:type="object">Thai\S3\Console\Command\StorageDisableCommand</item>
                 <item name="s3StorageEnableCommand" xsi:type="object">Thai\S3\Console\Command\StorageEnableCommand</item>
                 <item name="s3StorageExportCommand" xsi:type="object">Thai\S3\Console\Command\StorageExportCommand</item>
