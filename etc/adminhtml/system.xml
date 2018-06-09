@@ -30,7 +30,7 @@
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="url" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="endpoint" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>URL</label>
                     <depends>
                         <field id="enabled">1</field>
