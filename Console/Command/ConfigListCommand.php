@@ -34,8 +34,6 @@ class ConfigListCommand extends \Symfony\Component\Console\Command\Command
             // intentionally left empty
         }
 
-        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
-
         $config = $this->configFactory->create();
         $output->writeln('Here are your AWS credentials.');
         $output->writeln('');

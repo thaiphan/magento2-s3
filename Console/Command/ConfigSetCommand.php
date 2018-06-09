@@ -40,8 +40,6 @@ class ConfigSetCommand extends \Symfony\Component\Console\Command\Command
             // intentionally left empty
         }
 
-        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
-
         if (!$input->getOption('region') && !$input->getOption('bucket') && !$input->getOption('secret-key') && !$input->getOption('access-key-id')) {
             $output->writeln($this->getSynopsis());
             return;

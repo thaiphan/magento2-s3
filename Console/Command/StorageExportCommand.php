@@ -48,8 +48,6 @@ class StorageExportCommand extends \Symfony\Component\Console\Command\Command
             // intentionally left empty
         }
 
-        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
-
         $errors = $this->validate($input);
         if ($errors) {
             $output->writeln('<error>' . implode('</error>' . PHP_EOL .  '<error>', $errors) . '</error>');

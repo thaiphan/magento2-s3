@@ -33,8 +33,6 @@ class CustomEndpointDisableCommand extends \Symfony\Component\Console\Command\Co
             // intentionally left empty
         }
 
-        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
-
         $output->writeln('Updating configuration to use Amazon S3 as the default endpoint.');
 
         $config = $this->configFactory->create();
