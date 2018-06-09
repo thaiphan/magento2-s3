@@ -48,69 +48,11 @@ class StorageDisableCommand extends \Symfony\Component\Console\Command\Command
             // intentionally left empty
         }
 
-        echo(sprintf("[Debug] App Area: %s\n", $this->state->getAreaCode())); // Required to avoid "area code not set" error
-
-        $errors = $this->validate($input);
-        if ($errors) {
-            $output->writeln('<error>' . implode('</error>' . PHP_EOL .  '<error>', $errors) . '</error>');
-            return;
-        }
-
-        try {
-            $options = [
-                'version' => 'latest',
-                'region' => $this->helper->getRegion(),
-                'credentials' => [
-                    'key' => $this->helper->getAccessKey(),
-                    'secret' => $this->helper->getSecretKey()
-                ]
-            ];
-
-            if ( ! empty($this->helper->getEndpoint())) {
-                $options['endpoint'] = $this->helper->getEndpoint();
-            }
-
-            $this->client = new \Aws\S3\S3Client($options);
-        } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
-            return;
-        }
-
-        if (!$this->client->doesBucketExist($this->helper->getBucket())) {
-            $output->writeln('<error>The AWS credentials you provided did not work. Please review your details and try again. You can do so using our config script.</error>');
-            return;
-        }
-
-        if ($this->coreFileStorage->getCurrentStorageCode() != \Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3) {
-            $output->writeln('<error>You are not using S3 as your media file storage backend!</error>');
-            return;
-        }
-
         $output->writeln('Updating configuration to use the local filesystem.');
 
         $config = $this->configFactory->create();
         $config->setDataByPath('system/media_storage_configuration/media_storage', \Magento\MediaStorage\Model\File\Storage::STORAGE_MEDIA_FILE_SYSTEM);
         $config->save();
         $output->writeln(sprintf('<info>Magento now uses the local filesystem for its file backend storage.</info>'));
-    }
-
-    public function validate(InputInterface $input)
-    {
-        $errors = [];
-
-        if (is_null($this->helper->getAccessKey())) {
-            $errors[] = 'You have not provided an AWS access key ID. You can do so using our config script.';
-        }
-        if (is_null($this->helper->getSecretKey())) {
-            $errors[] = 'You have not provided an AWS secret access key. You can do so using our config script.';
-        }
-        if (is_null($this->helper->getBucket())) {
-            $errors[] = 'You have not provided an S3 bucket. You can do so using our config script.';
-        }
-        if (is_null($this->helper->getRegion())) {
-            $errors[] = 'You have not provided an S3 region. You can do so using our config script.';
-        }
-
-        return $errors;
     }
 }
