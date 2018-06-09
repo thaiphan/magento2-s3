@@ -36,9 +36,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->getValue('thai_s3/general/region');
     }
 
+    public function getEndpointEnabled()
+    {
+        return $this->scopeConfig->getValue('thai_s3/custom_endpoint/enabled');
+    }
+
     public function getEndpoint()
     {
-        return $this->scopeConfig->getValue('thai_s3/general/endpoint');
+        return $this->scopeConfig->getValue('thai_s3/custom_endpoint/endpoint');
+    }
+
+    public function getEndpointRegion()
+    {
+        return $this->scopeConfig->getValue('thai_s3/custom_endpoint/region');
     }
 
     public function getBucket()

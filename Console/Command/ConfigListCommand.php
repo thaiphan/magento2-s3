@@ -43,6 +43,5 @@ class ConfigListCommand extends \Symfony\Component\Console\Command\Command
         $output->writeln(sprintf('Secret Access Key: %s', $config->getConfigDataValue('thai_s3/general/secret_key')));
         $output->writeln(sprintf('Bucket:            %s', $config->getConfigDataValue('thai_s3/general/bucket')));
         $output->writeln(sprintf('Region:            %s', $config->getConfigDataValue('thai_s3/general/region')));
-        $output->writeln(sprintf('Endpoint:          %s', $config->getConfigDataValue('thai_s3/general/endpoint')));
     }
 }

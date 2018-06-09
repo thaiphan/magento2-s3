@@ -72,7 +72,6 @@ class ConfigSetCommand extends \Symfony\Component\Console\Command\Command
             'secret-key'    => 'secret_key',
             'bucket'        => 'bucket',
             'region'        => 'region',
-            'endpoint'      => 'endpoint'
         ];
     }
 
@@ -83,7 +82,6 @@ class ConfigSetCommand extends \Symfony\Component\Console\Command\Command
             new InputOption('secret-key', null, InputOption::VALUE_OPTIONAL, 'a valid AWS secret access key'),
             new InputOption('bucket', null, InputOption::VALUE_OPTIONAL, 'an S3 bucket name'),
             new InputOption('region', null, InputOption::VALUE_OPTIONAL, 'an S3 region, e.g. us-east-1'),
-            new InputOption('endpoint', null, InputOption::VALUE_OPTIONAL, 'an S3 endpoint, e.g. https://nyc3.digitaloceanspaces.com'),
         ];
     }
 
