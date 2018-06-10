@@ -49,4 +49,7 @@
     <type name="Magento\Swatches\Helper\Media">
         <plugin name="thai_s3_helper_swatches_media_plugin" type="Thai\S3\Helper\Swatches\Media\Plugin" />
     </type>
+    <type name="Magento\Captcha\Model\DefaultModel">
+        <plugin name="thai_s3_model_captcha_defaultmodel_plugin" type="Thai\S3\Model\Captcha\DefaultModel\Plugin" />
+    </type>
 </config>
