@@ -5,9 +5,18 @@ Thai's S3 Extension for Magento 2
 [![MIT License](https://poser.pugx.org/thaiphan/magento2-s3/license.svg)](https://packagist.org/packages/thaiphan/magento2-s3)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/thaiphan)
 
+[Amazon S3](https://aws.amazon.com/s3/) is a popular file storage solution that allows web apps to host images in the cloud. Setting up your web app to use cloud storage removes the need to use the local filesystem to store images. This, in turn, allows companies to spin up more servers to handle more traffic without having to worry also copying over pre-existing images onto these new servers. Cloud storage also provides some other performance benefits, such as shifting a lot of the load of retrieving images for a customer to S3 and the ability to easily set up a CloudFront CDN for your images.
+
 Thai's S3 extension for Magento 2 allows retailers to upload their catalogue and WYSIWYG images straight to Amazon S3.
 
-Benefits
+This is done by overriding the [built-in database file storage mechanism](https://docs.magento.com/m2/ee/user_guide/system/media-storage-database.html) to upload to Amazon S3 bucket instead of MySQL. By handling integration with Amazon S3 in this manner, this extension will work nicely with third-party extensions that properly use Magento's file system mechanisms as well as work with any future Magento functionality.
+
+Account & pricing
+-----------------
+
+You will need to create an [Amazon AWS account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) to get started. The cost to host your images on S3 varies depending on the AWS region that you are using and on the kind and amount of images that you upload. Click here for more detailed pricing information, https://aws.amazon.com/s3/pricing/
+
+Features
 --------
 
 ### Easy to use

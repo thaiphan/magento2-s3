@@ -42,7 +42,7 @@ class S3 extends DataObject
     private $logger;
 
     /**
-     * @var \Magento\Framework\Serialize\SerializerInterface
+     * @var \Magento\Framework\Serialize\SerializerInterface|\Zend_Serializer
      */
     private $serializer;
 
@@ -52,8 +52,7 @@ class S3 extends DataObject
         \Thai\S3\Helper\Data $helper,
         \Magento\MediaStorage\Helper\File\Media $mediaHelper,
         \Magento\MediaStorage\Helper\File\Storage\Database $storageHelper,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Serialize\Serializer\Json $serializer
+        \Psr\Log\LoggerInterface $logger
     ) {
         parent::__construct();
 
@@ -61,7 +60,7 @@ class S3 extends DataObject
         $this->mediaHelper = $mediaHelper;
         $this->storageHelper = $storageHelper;
         $this->logger = $logger;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->serializer = $this->getSerializer();
 
         $options = [
             'version' => 'latest',
@@ -93,6 +92,25 @@ class S3 extends DataObject
     public function init()
     {
         return $this;
+    }
+
+    /**
+     * Retrieve Serializer depending the Magento Version
+     *
+     * @return bool|\Zend_Serializer|\Magento\Framework\Serialize\Serializer\Serialize
+     */
+    protected function getSerializer()
+    {
+        // Magento Version 2.1.*
+        $serializer = \Zend_Serializer::factory(\Zend_Serializer_Adapter_PhpSerialize::class);
+
+        // Magento Version 2.2.*
+        if (class_exists(\Magento\Framework\Serialize\Serializer\Serialize::class)) {
+            $serializer = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Serialize\Serializer\Serialize::class
+            );
+        }
+        return $serializer;
     }
 
     /**
