@@ -2,6 +2,8 @@
 namespace Thai\S3\Console\Command;
 
 use Magento\Config\Model\Config\Factory;
+use Magento\MediaStorage\Helper\File\Storage\Database;
+use Magento\MediaStorage\Helper\File\StorageFactory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -17,18 +19,20 @@ class StorageExportCommand extends \Symfony\Component\Console\Command\Command
 
     private $coreFileStorage;
 
+    private $coreFileStorageFactory;
+
     private $storageHelper;
 
     public function __construct(
         \Magento\Framework\App\State $state,
         Factory $configFactory,
-        \Magento\MediaStorage\Helper\File\Storage\Database $storageHelper,
-        \Magento\MediaStorage\Helper\File\Storage $coreFileStorage,
+        Database $storageHelper,
+        StorageFactory $coreFileStorageFactory,
         \Thai\S3\Helper\Data $helper
     ) {
         $this->state = $state;
         $this->configFactory = $configFactory;
-        $this->coreFileStorage = $coreFileStorage;
+        $this->coreFileStorageFactory = $coreFileStorageFactory;
         $this->helper = $helper;
         $this->storageHelper = $storageHelper;
         parent::__construct();
@@ -85,14 +89,14 @@ class StorageExportCommand extends \Symfony\Component\Console\Command\Command
             return;
         }
 
-        if ($this->coreFileStorage->getCurrentStorageCode() == \Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3) {
+        if ($this->getFileStorageHelper()->getCurrentStorageCode() == \Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3) {
             $output->writeln('<error>You are already using S3 as your media file storage backend!</error>');
             return;
         }
 
-        $sourceModel = $this->coreFileStorage->getStorageModel();
+        $sourceModel = $this->getFileStorageHelper()->getStorageModel();
         /** @var \Thai\S3\Model\MediaStorage\File\Storage\S3 $destinationModel */
-        $destinationModel = $this->coreFileStorage->getStorageModel(\Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3);
+        $destinationModel = $this->getFileStorageHelper()->getStorageModel(\Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3);
 
         $offset = 0;
         while (($files = $sourceModel->exportFiles($offset, 1)) !== false) {
@@ -124,5 +128,16 @@ class StorageExportCommand extends \Symfony\Component\Console\Command\Command
         }
 
         return $errors;
+    }
+
+    /**
+     * @return \Magento\MediaStorage\Helper\File\Storage
+     */
+    public function getFileStorageHelper()
+    {
+        if (is_null($this->coreFileStorage)) {
+            $this->coreFileStorage = $this->coreFileStorageFactory->create();
+        }
+        return $this->coreFileStorage;
     }
 }
