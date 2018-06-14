@@ -11,26 +11,12 @@ class StorageDisableCommand extends \Symfony\Component\Console\Command\Command
 
     private $state;
 
-    private $helper;
-
-    private $client;
-
-    private $coreFileStorage;
-
-    private $storageHelper;
-
     public function __construct(
         \Magento\Framework\App\State $state,
-        Factory $configFactory,
-        \Magento\MediaStorage\Helper\File\Storage\Database $storageHelper,
-        \Magento\MediaStorage\Helper\File\Storage $coreFileStorage,
-        \Thai\S3\Helper\Data $helper
+        Factory $configFactory
     ) {
         $this->state = $state;
         $this->configFactory = $configFactory;
-        $this->coreFileStorage = $coreFileStorage;
-        $this->helper = $helper;
-        $this->storageHelper = $storageHelper;
         parent::__construct();
     }
 
