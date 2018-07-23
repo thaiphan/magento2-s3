@@ -1,30 +1,41 @@
 <?php
 namespace Thai\S3\Helper\Swatches\Media;
 
+use Magento\Catalog\Model\Product\Media\Config;
+use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\Swatches\Helper\Media;
 
+/**
+ * Plugin for Media.
+ *
+ * @see Media
+ */
 class Plugin
 {
     /**
-     * @var \Magento\Catalog\Model\Product\Media\Config
+     * @var Config
      */
     protected $mediaConfig;
 
     /**
      * Core file storage database
      *
-     * @var \Magento\MediaStorage\Helper\File\Storage\Database
+     * @var Database
      */
-    protected $fileStorageDb = null;
+    protected $fileStorageDb;
 
     /**
      * @var array
      */
     protected $swatchImageTypes = ['swatch_image', 'swatch_thumb'];
 
+    /**
+     * @param Config $mediaConfig
+     * @param Database $fileStorageDb
+     */
     public function __construct(
-        \Magento\Catalog\Model\Product\Media\Config $mediaConfig,
-        \Magento\MediaStorage\Helper\File\Storage\Database $fileStorageDb
+        Config $mediaConfig,
+        Database $fileStorageDb
     ) {
         $this->mediaConfig = $mediaConfig;
         $this->fileStorageDb = $fileStorageDb;
@@ -59,6 +70,12 @@ class Plugin
         return [$file];
     }
 
+    /**
+     * @param Media $subject
+     * @param callable $proceed
+     * @param string $imageUrl
+     * @return mixed
+     */
     public function aroundGenerateSwatchVariations(Media $subject, callable $proceed, $imageUrl)
     {
         if ($this->fileStorageDb->checkDbUsage()) {
@@ -76,7 +93,8 @@ class Plugin
             foreach ($this->swatchImageTypes as $swatchType) {
                 $imageConfig = $subject->getImageConfig();
                 $fileName = $this->prepareFileName($imageUrl);
-                $swatchPath = $subject->getSwatchCachePath($swatchType) . $subject->getFolderNameSize($swatchType, $imageConfig) . $fileName['path'] . '/' . $fileName['name'];
+                $swatchPath = $subject->getSwatchCachePath($swatchType) . $subject->getFolderNameSize($swatchType,
+                        $imageConfig) . $fileName['path'] . '/' . $fileName['name'];
                 $this->fileStorageDb->saveFile($swatchPath);
             }
 
@@ -97,6 +115,7 @@ class Plugin
         $fileArray = explode('/', $imageUrl);
         $fileName = array_pop($fileArray);
         $filePath = implode('/', $fileArray);
+
         return ['name' => $fileName, 'path' => $filePath];
     }
 
