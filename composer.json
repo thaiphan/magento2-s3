@@ -18,6 +18,7 @@
     }
   },
   "require": {
-    "aws/aws-sdk-php": "3.x"
+    "aws/aws-sdk-php": "3.x",
+    "symfony/console": "^2.6||^4.0"
   }
 }

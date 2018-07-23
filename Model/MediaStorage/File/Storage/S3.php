@@ -2,7 +2,11 @@
 namespace Thai\S3\Model\MediaStorage\File\Storage;
 
 use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
 use Magento\Framework\DataObject;
+use Magento\Framework\Serialize\SerializerInterface;
+use Psr\Log\LoggerInterface;
+use Thai\S3\Helper\Data as DataHelper;
 
 class S3 extends DataObject
 {
@@ -13,8 +17,14 @@ class S3 extends DataObject
      */
     protected $mediaBaseDirectory = null;
 
+    /**
+     * @var S3Client
+     */
     private $client;
 
+    /**
+     * @var S3Helper
+     */
     private $helper;
 
     /**
@@ -37,22 +47,31 @@ class S3 extends DataObject
     private $errors = [];
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 
     /**
-     * @var \Magento\Framework\Serialize\SerializerInterface|\Zend_Serializer
+     * @var SerializerInterface|\Zend_Serializer
      */
     private $serializer;
 
+    /**
+     * @var array
+     */
     private $objects = [];
 
+    /**
+     * @param DataHelper $helper
+     * @param \Magento\MediaStorage\Helper\File\Media $mediaHelper
+     * @param \Magento\MediaStorage\Helper\File\Storage\Database $storageHelper
+     * @param LoggerInterface $logger
+     */
     public function __construct(
-        \Thai\S3\Helper\Data $helper,
+        DataHelper $helper,
         \Magento\MediaStorage\Helper\File\Media $mediaHelper,
         \Magento\MediaStorage\Helper\File\Storage\Database $storageHelper,
-        \Psr\Log\LoggerInterface $logger
+        LoggerInterface $logger
     ) {
         parent::__construct();
 
@@ -67,8 +86,8 @@ class S3 extends DataObject
             'region' => $this->helper->getRegion(),
             'credentials' => [
                 'key' => $this->helper->getAccessKey(),
-                'secret' => $this->helper->getSecretKey()
-            ]
+                'secret' => $this->helper->getSecretKey(),
+            ],
         ];
 
         if ($this->helper->getEndpointEnabled()) {
@@ -110,6 +129,7 @@ class S3 extends DataObject
                 \Magento\Framework\Serialize\Serializer\Serialize::class
             );
         }
+
         return $serializer;
     }
 
@@ -133,13 +153,13 @@ class S3 extends DataObject
         try {
             $object = $this->client->getObject([
                 'Bucket' => $this->getBucket(),
-                'Key' => $filename
+                'Key' => $filename,
             ]);
 
             if ($object['Body']) {
                 $this->setData('id', $filename);
                 $this->setData('filename', $filename);
-                $this->setData('content', (string) $object['Body']);
+                $this->setData('content', (string)$object['Body']);
             } else {
                 $fail = true;
             }
@@ -150,6 +170,7 @@ class S3 extends DataObject
         if ($fail) {
             $this->unsetData();
         }
+
         return $this;
     }
 
@@ -161,20 +182,34 @@ class S3 extends DataObject
         return !empty($this->errors);
     }
 
+    /**
+     * @return $this
+     * @throws \Aws\S3\Exception\DeleteMultipleObjectsException
+     */
     public function clear()
     {
         $batch = \Aws\S3\BatchDelete::fromListObjects($this->client, [
-            'Bucket' => $this->getBucket()
+            'Bucket' => $this->getBucket(),
         ]);
         $batch->delete();
+
         return $this;
     }
 
+    /**
+     * @param int $offset
+     * @param int $count
+     * @return bool
+     */
     public function exportDirectories($offset = 0, $count = 100)
     {
         return false;
     }
 
+    /**
+     * @param array $dirs
+     * @return $this
+     */
     public function importDirectories(array $dirs = [])
     {
         return $this;
@@ -190,6 +225,11 @@ class S3 extends DataObject
         return null;
     }
 
+    /**
+     * @param int $offset
+     * @param int $count
+     * @return array|bool
+     */
     public function exportFiles($offset = 0, $count = 100)
     {
         $files = [];
@@ -197,13 +237,13 @@ class S3 extends DataObject
         if (empty($this->objects)) {
             $this->objects = $this->client->listObjects([
                 'Bucket' => $this->getBucket(),
-                'MaxKeys' => $count
+                'MaxKeys' => $count,
             ]);
         } else {
             $this->objects = $this->client->listObjects([
                 'Bucket' => $this->getBucket(),
                 'MaxKeys' => $count,
-                'Marker' => $this->objects[count($this->objects) - 1]
+                'Marker' => $this->objects[count($this->objects) - 1],
             ]);
         }
 
@@ -213,14 +253,14 @@ class S3 extends DataObject
 
         foreach ($this->objects as $object) {
             if (isset($object['Contents']) && substr($object['Contents'], -1) != '/') {
-                $content =  $this->client->getObject([
+                $content = $this->client->getObject([
                     'Bucket' => $this->getBucket(),
-                    'Key' => $object['Key']
+                    'Key' => $object['Key'],
                 ]);
                 if (isset($content['Body'])) {
                     $files[] = [
                         'filename' => $object['Key'],
-                        'content' => (string) $content['Body']
+                        'content' => (string)$content['Body'],
                     ];
                 }
             }
@@ -229,6 +269,10 @@ class S3 extends DataObject
         return $files;
     }
 
+    /**
+     * @param array $files
+     * @return $this
+     */
     public function importFiles(array $files = [])
     {
         foreach ($files as $file) {
@@ -248,6 +292,11 @@ class S3 extends DataObject
         return $this;
     }
 
+    /**
+     * @param string $filename
+     * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function saveFile($filename)
     {
         $file = $this->mediaHelper->collectFileInfo($this->getMediaBaseDirectory(), $filename);
@@ -262,6 +311,10 @@ class S3 extends DataObject
         return $this;
     }
 
+    /**
+     * @param array $headers
+     * @return array
+     */
     public function getAllParams(array $headers = [])
     {
         $headers['ACL'] = 'public-read';
@@ -282,11 +335,14 @@ class S3 extends DataObject
         return $headers;
     }
 
+    /**
+     * @return array
+     */
     public function getMetadata()
     {
         $meta = [];
-
         $headers = $this->helper->getCustomHeaders();
+
         if ($headers) {
             $unserializedHeaders = $this->serializer->unserialize($headers);
             foreach ($unserializedHeaders as $header) {
@@ -297,11 +353,20 @@ class S3 extends DataObject
         return $meta;
     }
 
+    /**
+     * @param $filename
+     * @return bool
+     */
     public function fileExists($filename)
     {
         return $this->client->doesObjectExist($this->getBucket(), $filename);
     }
 
+    /**
+     * @param string $oldFilePath
+     * @param string $newFilePath
+     * @return $this
+     */
     public function copyFile($oldFilePath, $newFilePath)
     {
         $this->client->copyObject($this->getAllParams([
@@ -313,6 +378,11 @@ class S3 extends DataObject
         return $this;
     }
 
+    /**
+     * @param string $oldFilePath
+     * @param string $newFilePath
+     * @return $this
+     */
     public function renameFile($oldFilePath, $newFilePath)
     {
         $this->client->copyObject($this->getAllParams([
@@ -323,7 +393,7 @@ class S3 extends DataObject
 
         $this->client->deleteObject([
             'Bucket' => $this->getBucket(),
-            'Key' => $oldFilePath
+            'Key' => $oldFilePath,
         ]);
 
         return $this;
@@ -339,12 +409,16 @@ class S3 extends DataObject
     {
         $this->client->deleteObject([
             'Bucket' => $this->getBucket(),
-            'Key' => $path
+            'Key' => $path,
         ]);
 
         return $this;
     }
 
+    /**
+     * @param string $path
+     * @return array
+     */
     public function getSubdirectories($path)
     {
         $subdirectories = [];
@@ -355,7 +429,7 @@ class S3 extends DataObject
         $objects = $this->client->listObjects([
             'Bucket' => $this->getBucket(),
             'Prefix' => $prefix,
-            'Delimiter' => '/'
+            'Delimiter' => '/',
         ]);
 
         if (isset($objects['CommonPrefixes'])) {
@@ -365,7 +439,7 @@ class S3 extends DataObject
                 }
 
                 $subdirectories[] = [
-                    'name' => $object['Prefix']
+                    'name' => $object['Prefix'],
                 ];
             }
         }
@@ -373,6 +447,10 @@ class S3 extends DataObject
         return $subdirectories;
     }
 
+    /**
+     * @param string $path
+     * @return array
+     */
     public function getDirectoryFiles($path)
     {
         $files = [];
@@ -383,7 +461,7 @@ class S3 extends DataObject
         $objects = $this->client->listObjects([
             'Bucket' => $this->getBucket(),
             'Prefix' => $prefix,
-            'Delimiter' => '/'
+            'Delimiter' => '/',
         ]);
 
         if (isset($objects['Contents'])) {
@@ -391,12 +469,12 @@ class S3 extends DataObject
                 if (isset($object['Key']) && $object['Key'] != $prefix) {
                     $content = $this->client->getObject([
                         'Bucket' => $this->getBucket(),
-                        'Key' => $object['Key']
+                        'Key' => $object['Key'],
                     ]);
                     if (isset($content['Body'])) {
                         $files[] = [
                             'filename' => $object['Key'],
-                            'content' =>(string) $content['Body']
+                            'content' => (string)$content['Body'],
                         ];
                     }
                 }
@@ -406,6 +484,10 @@ class S3 extends DataObject
         return $files;
     }
 
+    /**
+     * @param string $path
+     * @return $this
+     */
     public function deleteDirectory($path)
     {
         $mediaRelativePath = $this->storageHelper->getMediaRelativePath($path);
@@ -416,6 +498,9 @@ class S3 extends DataObject
         return $this;
     }
 
+    /**
+     * @return string
+     */
     protected function getBucket()
     {
         return $this->helper->getBucket();
@@ -428,9 +513,10 @@ class S3 extends DataObject
      */
     public function getMediaBaseDirectory()
     {
-        if (is_null($this->mediaBaseDirectory)) {
+        if (null === $this->mediaBaseDirectory) {
             $this->mediaBaseDirectory = $this->storageHelper->getMediaBaseDir();
         }
+
         return $this->mediaBaseDirectory;
     }
 }

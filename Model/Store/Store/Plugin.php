@@ -1,6 +1,8 @@
 <?php
 namespace Thai\S3\Model\Store\Store;
 
+use Magento\Store\Model\Store as Store;
+
 class Plugin
 {
     /**
@@ -8,11 +10,11 @@ class Plugin
      * slashes to the media rewrite script. We remove one of those extra forward
      * slashes.
      *
-     * @param \Magento\Store\Model\Store $subject
+     * @param Store $subject
      * @param string $result
      * @return string
      */
-    public function afterGetBaseUrl(\Magento\Store\Model\Store $subject, $result)
+    public function afterGetBaseUrl(Store $subject, $result)
     {
         return str_replace('//get.php/', '/get.php/', $result);
     }

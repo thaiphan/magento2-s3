@@ -2,42 +2,64 @@
 namespace Thai\S3\Console\Command;
 
 use Magento\Config\Model\Config\Factory;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CustomEndpointDisableCommand extends \Symfony\Component\Console\Command\Command
+/**
+ * @inheritdoc
+ */
+class CustomEndpointDisableCommand extends Command
 {
+    /**
+     * @var Factory
+     */
     private $configFactory;
 
+    /**
+     * @var State
+     */
     private $state;
+
+    /**
+     * @param State $state
+     * @param Factory $configFactory
+     */
     public function __construct(
-        \Magento\Framework\App\State $state,
+        State $state,
         Factory $configFactory
     ) {
         $this->state = $state;
         $this->configFactory = $configFactory;
+
         parent::__construct();
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         $this->setName('s3:custom-endpoint:disable');
         $this->setDescription('Revert to using Amazon S3 as the default endpoint.');
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        try {
-            $this->state->setAreaCode('adminhtml');
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            // intentionally left empty
-        }
+        $this->state->emulateAreaCode(Area::AREA_ADMINHTML, function () use ($output) {
+            $output->writeln('Updating configuration to use Amazon S3 as the default endpoint.');
 
-        $output->writeln('Updating configuration to use Amazon S3 as the default endpoint.');
-
-        $config = $this->configFactory->create();
-        $config->setDataByPath('thai_s3/custom_endpoint/enabled', 0);
-        $config->save();
-        $output->writeln(sprintf('<info>Magento now uses Amazon S3 as the default endpoint.</info>'));
+            $config = $this->configFactory->create();
+            $config->setDataByPath('thai_s3/custom_endpoint/enabled', 0);
+            $config->save();
+            $output->writeln(sprintf('<info>Magento now uses Amazon S3 as the default endpoint.</info>'));
+        });
     }
 }

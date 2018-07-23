@@ -1,24 +1,44 @@
 <?php
 namespace Thai\S3\Model\MediaStorage\File\Storage;
 
+use Magento\MediaStorage\Helper\File\Storage;
+
 class Plugin
 {
+    /**
+     * @var Storage
+     */
     private $coreFileStorage;
+
+    /**
+     * @var S3Factory
+     */
     private $s3Factory;
 
+    /**
+     * @param Storage $coreFileStorage
+     * @param S3Factory $s3Factory
+     */
     public function __construct(
-        \Magento\MediaStorage\Helper\File\Storage $coreFileStorage,
+        Storage $coreFileStorage,
         S3Factory $s3Factory
     ) {
         $this->coreFileStorage = $coreFileStorage;
         $this->s3Factory = $s3Factory;
     }
 
+    /**
+     * @param Storage $subject
+     * @param \Closure $proceed
+     * @param string $storage
+     * @param array $params
+     * @return bool
+     */
     public function aroundGetStorageModel($subject, $proceed, $storage = null, array $params = [])
     {
         $storageModel = $proceed($storage, $params);
         if ($storageModel === false) {
-            if (is_null($storage)) {
+            if (null === $storage) {
                 $storage = $this->coreFileStorage->getCurrentStorageCode();
             }
             switch ($storage) {

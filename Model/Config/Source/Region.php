@@ -1,11 +1,23 @@
 <?php
 namespace Thai\S3\Model\Config\Source;
 
-class Region implements \Magento\Framework\Option\ArrayInterface
+use Magento\Framework\Option\ArrayInterface;
+use Thai\S3\Helper\S3 as S3Helper;
+
+/**
+ * Regions source.
+ */
+class Region implements ArrayInterface
 {
+    /**
+     * @var S3Helper
+     */
     private $helper;
 
-    public function __construct(\Thai\S3\Helper\S3 $helper)
+    /**
+     * @param S3Helper $helper
+     */
+    public function __construct(S3Helper $helper)
     {
         $this->helper = $helper;
     }

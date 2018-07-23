@@ -1,16 +1,26 @@
 <?php
 namespace Thai\S3\Model\Captcha\DefaultModel;
 
-use Thai\S3\Helper\Data;
-use Magento\Cms\Model\Wysiwyg\Images\Storage;
-use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Captcha\Model\DefaultModel;
 use Magento\MediaStorage\Helper\File\Storage\Database;
+use Thai\S3\Helper\Data;
 
 class Plugin
 {
+    /**
+     * @var Data
+     */
     private $helper;
+
+    /**
+     * @var Database
+     */
     private $database;
 
+    /**
+     * @param Data $helper
+     * @param Database $database
+     */
     public function __construct(
         Data $helper,
         Database $database
@@ -19,7 +29,12 @@ class Plugin
         $this->database = $database;
     }
 
-    public function afterGenerate(\Magento\Captcha\Model\DefaultModel $subject, $result)
+    /**
+     * @param DefaultModel $subject
+     * @param \Closure $result
+     * @return mixed
+     */
+    public function afterGenerate(DefaultModel $subject, $result)
     {
         if ($this->helper->checkS3Usage()) {
             $imgFile = $subject->getImgDir() . $result . $subject->getSuffix();
