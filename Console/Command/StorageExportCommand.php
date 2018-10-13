@@ -114,9 +114,9 @@ class StorageExportCommand extends Command
                 return 1;
             }
 
-            $sourceModel = $this->getFileStorageHelper()->getStorageModel();
+            $sourceModel = $this->coreFileStorage->getStorageModel();
             /** @var \Thai\S3\Model\MediaStorage\File\Storage\S3 $destinationModel */
-            $destinationModel = $this->getFileStorageHelper()->getStorageModel(\Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3);
+            $destinationModel = $this->coreFileStorage->getStorageModel(\Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3);
 
             $offset = 0;
             while (($files = $sourceModel->exportFiles($offset, 1)) !== false) {
