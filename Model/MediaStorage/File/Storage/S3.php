@@ -116,17 +116,17 @@ class S3 extends DataObject
     /**
      * Retrieve Serializer depending the Magento Version
      *
-     * @return bool|\Zend_Serializer|\Magento\Framework\Serialize\Serializer\Serialize
+     * @return bool|\Zend_Serializer|\Magento\Framework\Serialize\Serializer\Json
      */
     protected function getSerializer()
     {
         // Magento Version 2.1.*
-        $serializer = \Zend\Serializer\Serializer::factory(\Zend\Serializer\Adapter\PhpSerialize::class);
+        $serializer = \Zend\Serializer\Serializer::factory(\Zend\Serializer\Adapter\Json::class);
 
         // Magento Version 2.2.*
-        if (class_exists(\Magento\Framework\Serialize\Serializer\Serialize::class)) {
-            $serializer = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Serialize\Serializer\Serialize::class
+        if (class_exists(\Magento\Framework\Serialize\Serializer\Json::class)) {
+            return \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Serialize\Serializer\Json::class
             );
         }
 
