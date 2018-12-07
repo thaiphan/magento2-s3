@@ -2,6 +2,12 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <system>
+            <thai_s3>
+                <general>
+                    <access_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                    <secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                </general>
+            </thai_s3>
             <media_storage_configuration>
                 <allowed_resources>
                     <attribute_image_folder>attribute</attribute_image_folder>

@@ -52,4 +52,12 @@
     <type name="Magento\Captcha\Model\DefaultModel">
         <plugin name="thai_s3_model_captcha_defaultmodel_plugin" type="Thai\S3\Model\Captcha\DefaultModel\Plugin" />
     </type>
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="thai_s3/general/access_key" xsi:type="string">1</item>
+                <item name="thai_s3/general/secret_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
