@@ -60,4 +60,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Theme\Model\Design\Backend\Logo">
+        <plugin name="thai_s3_model_theme_design_backend_logo_plugin" type="Thai\S3\Model\Theme\Design\Backend\Logo\Plugin" />
+    </type>
 </config>
