@@ -32,6 +32,7 @@ The following images are automatically saved to S3:
 * WYSIWYG images
 * Category images
 * CAPTCHA images
+* Logos and favicons
 
 ### Magento can now scale horizontally
 
