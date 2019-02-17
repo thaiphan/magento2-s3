@@ -63,4 +63,7 @@
     <type name="Magento\Theme\Model\Design\Backend\Logo">
         <plugin name="thai_s3_model_theme_design_backend_logo_plugin" type="Thai\S3\Model\Theme\Design\Backend\Logo\Plugin" />
     </type>
+    <type name="Magento\Theme\Model\Design\Backend\Favicon">
+        <plugin name="thai_s3_model_theme_design_backend_favicon_plugin" type="Thai\S3\Model\Theme\Design\Backend\Favicon\Plugin" />
+    </type>
 </config>
