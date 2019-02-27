@@ -44,14 +44,16 @@ class Plugin
      */
     public function beforeSynchronize($subject, $relativeFileName)
     {
+        $normalisedRelativeFileName = $this->getNormalisedRelativeFileName($relativeFileName);
+
         $storage = $this->storageFactory->create();
         try {
-            $storage->loadByFilename($relativeFileName);
+            $storage->loadByFilename($normalisedRelativeFileName);
         } catch (\Exception $e) {
         }
 
         if ($storage->getId()) {
-            $file = $this->mediaDirectory->openFile($relativeFileName, 'w');
+            $file = $this->mediaDirectory->openFile($normalisedRelativeFileName, 'w');
             try {
                 $file->lock();
                 $file->write($storage->getContent());
@@ -65,5 +67,22 @@ class Plugin
         return [
             $relativeFileName,
         ];
+    }
+
+    /**
+     * The value of the relativeFileName param in Magento 2.3 is prefixed with
+     * "media/" whereas older versions don't include this prefix.
+     *
+     * This plugin strips out the "media/" prefix so we can properly retrieve
+     * the object from S3.
+     *
+     * @param string $relativeFileName
+     * @return string
+     */
+    private function getNormalisedRelativeFileName($relativeFileName)
+    {
+        $normalisedRelativeFileName = ltrim($relativeFileName, '/');
+        $normalisedRelativeFileName = ltrim($normalisedRelativeFileName, 'media');
+        return ltrim($normalisedRelativeFileName, '/');
     }
 }
