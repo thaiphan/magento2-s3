@@ -69,4 +69,7 @@
     <type name="Magento\MediaStorage\Service\ImageResize">
         <plugin name="thai_s3_service_mediastorage_imageresize_plugin" type="Thai\S3\Service\MediaStorage\ImageResize\Plugin" />
     </type>
+    <type name="Magento\Framework\Image">
+        <plugin name="thai_s3_framework_image_plugin" type="Thai\S3\Framework\Image\Plugin" />
+    </type>
 </config>
