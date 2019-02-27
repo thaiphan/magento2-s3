@@ -66,4 +66,7 @@
     <type name="Magento\Theme\Model\Design\Backend\Favicon">
         <plugin name="thai_s3_model_theme_design_backend_favicon_plugin" type="Thai\S3\Model\Theme\Design\Backend\Favicon\Plugin" />
     </type>
+    <type name="Magento\MediaStorage\Service\ImageResize">
+        <plugin name="thai_s3_service_mediastorage_imageresize_plugin" type="Thai\S3\Service\MediaStorage\ImageResize\Plugin" />
+    </type>
 </config>
