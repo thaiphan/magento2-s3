@@ -62,6 +62,10 @@ class S3
                 'label' => 'China (Ningxia)',
             ],
             [
+                'value' => 'eu-north-1',
+                'label' => 'EU (Stockholm)',
+            ],
+            [
                 'value' => 'eu-central-1',
                 'label' => 'EU (Frankfurt)',
             ],
@@ -88,6 +92,14 @@ class S3
             [
                 'value' => 'us-east-2',
                 'label' => 'US East (Ohio)',
+            ],
+            [
+                'value' => 'us-gov-east-1',
+                'label' => 'AWS GovCloud (US-East)',
+            ],
+            [
+                'value' => 'us-gov-west-1',
+                'label' => 'AWS GovCloud (US-West)',
             ],
             [
                 'value' => 'us-west-1',
