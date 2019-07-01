@@ -11,6 +11,18 @@ Thai's S3 extension for Magento 2 allows retailers to upload their catalogue and
 
 This is done by overriding the [built-in database file storage mechanism](https://docs.magento.com/m2/ee/user_guide/system/media-storage-database.html) to upload to Amazon S3 bucket instead of MySQL. By handling integration with Amazon S3 in this manner, this extension will work nicely with third-party extensions that properly use Magento's file system mechanisms as well as work with any future Magento functionality.
 
+Support
+-------
+
+| Magento Version | Supported                     |
+| :-------------- | :---------------------------- |
+| 2.0             | :white_check_mark:            |
+| 2.1             | :white_check_mark:            |
+| 2.2             | :white_check_mark:            |
+| 2.3             | :negative_squared_cross_mark: |
+
+Magento 2.3 introduced breaking changes, which I am still contemplating how to fix. Please be patient or help contribute to this open source project!
+
 Account & pricing
 -----------------
 
