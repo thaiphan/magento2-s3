@@ -61,6 +61,8 @@ class S3 extends DataObject
      */
     private $objects = [];
 
+    public static $scheduledForDeletion = [];
+
     /**
      * @param DataHelper $helper
      * @param \Magento\MediaStorage\Helper\File\Media $mediaHelper
@@ -101,6 +103,9 @@ class S3 extends DataObject
         }
 
         $this->client = new \Aws\S3\S3Client($options);
+
+        // We will delete renamed old files at the end of request.
+        register_shutdown_function([$this, 'deleteFilesScheduledForDeletion']);
     }
 
     /**
@@ -166,7 +171,10 @@ class S3 extends DataObject
         } catch (S3Exception $e) {
             $fail = true;
 
-            $this->logger->critical($e->getMessage());
+            $this->logger->error('Failed to load file from S3.', [
+                $filename,
+                $e->getMessage(),
+            ]);
         }
 
         if ($fail) {
@@ -287,7 +295,10 @@ class S3 extends DataObject
                 ]));
             } catch (\Exception $e) {
                 $this->errors[] = $e->getMessage();
-                $this->logger->critical($e);
+                $this->logger->error('Failed to put file in S3.', [
+                    $file['filename'],
+                    $e->getMessage(),
+                ]);
             }
         }
 
@@ -303,12 +314,19 @@ class S3 extends DataObject
     {
         $file = $this->mediaHelper->collectFileInfo($this->getMediaBaseDirectory(), $filename);
 
-        $this->client->putObject($this->getAllParams([
-            'Body' => $file['content'],
-            'Bucket' => $this->getBucket(),
-            'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
-            'Key' => $filename,
-        ]));
+        try{
+            $this->client->putObject($this->getAllParams([
+                'Body' => $file['content'],
+                'Bucket' => $this->getBucket(),
+                'ContentType' => \GuzzleHttp\Psr7\mimetype_from_filename($file['filename']),
+                'Key' => $filename,
+            ]));
+        } catch (S3Exception $e) {
+            $this->logger->error('Failed to save file in S3.', [
+                $filename,
+                $e->getMessage(),
+            ]);
+        }
 
         return $this;
     }
@@ -371,11 +389,19 @@ class S3 extends DataObject
      */
     public function copyFile($oldFilePath, $newFilePath)
     {
-        $this->client->copyObject($this->getAllParams([
-            'Bucket' => $this->getBucket(),
-            'Key' => $newFilePath,
-            'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-        ]));
+        try{
+            $this->client->copyObject($this->getAllParams([
+                'Bucket' => $this->getBucket(),
+                'Key' => $newFilePath,
+                'CopySource' => $this->getBucket() . '/' . $oldFilePath,
+            ]));
+        } catch (S3Exception $e) {
+            $this->logger->error('Failed to copy file in S3.', [
+                $oldFilePath,
+                $newFilePath,
+                $e->getMessage(),
+            ]);
+        }
 
         return $this;
     }
@@ -387,16 +413,23 @@ class S3 extends DataObject
      */
     public function renameFile($oldFilePath, $newFilePath)
     {
-        $this->client->copyObject($this->getAllParams([
-            'Bucket' => $this->getBucket(),
-            'Key' => $newFilePath,
-            'CopySource' => $this->getBucket() . '/' . $oldFilePath,
-        ]));
+        try{
+            $this->client->copyObject($this->getAllParams([
+                'Bucket' => $this->getBucket(),
+                'Key' => $newFilePath,
+                'CopySource' => $this->getBucket() . '/' . $oldFilePath,
+            ]));
 
-        $this->client->deleteObject([
-            'Bucket' => $this->getBucket(),
-            'Key' => $oldFilePath,
-        ]);
+            // This file can be used for other configurable product as well.
+            // We will delete it at the end of request.
+            self::$scheduledForDeletion[$oldFilePath] = $oldFilePath;
+        } catch (S3Exception $e) {
+            $this->logger->error('Failed to rename file in S3.', [
+                $oldFilePath,
+                $newFilePath,
+                $e->getMessage(),
+            ]);
+        }
 
         return $this;
     }
@@ -520,5 +553,22 @@ class S3 extends DataObject
         }
 
         return $this->mediaBaseDirectory;
+    }
+
+    /**
+     * Process the renamed old files scheduled for deletion.
+     */
+    public function deleteFilesScheduledForDeletion() {
+        foreach (self::$scheduledForDeletion as $file) {
+            try {
+                $this->deleteFile($file);
+                unset(self::$scheduledForDeletion[$file]);
+            }
+            catch (\Exception $e) {
+                $this->logger->error('Failed to delete file scheduled for deletion.', [
+                    $file
+                ]);
+            }
+        }
     }
 }
