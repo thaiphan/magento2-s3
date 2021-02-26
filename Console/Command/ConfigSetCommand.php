@@ -65,7 +65,7 @@ class ConfigSetCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         return $this->state->emulateAreaCode(Area::AREA_ADMINHTML, function () use ($input, $output) {
-            if (!$input->getOption('region') && !$input->getOption('bucket') && !$input->getOption('secret-key') && !$input->getOption('access-key-id')) {
+            if (!$input->getOption('region') && !$input->getOption('bucket')) {
                 $output->writeln($this->getSynopsis());
 
                 return 1;
@@ -99,8 +99,6 @@ class ConfigSetCommand extends Command
     public function getOptions()
     {
         return [
-            'access-key-id' => 'access_key',
-            'secret-key' => 'secret_key',
             'bucket' => 'bucket',
             'region' => 'region',
         ];
@@ -112,8 +110,6 @@ class ConfigSetCommand extends Command
     public function getOptionsList()
     {
         return [
-            new InputOption('access-key-id', null, InputOption::VALUE_OPTIONAL, 'a valid AWS access key ID'),
-            new InputOption('secret-key', null, InputOption::VALUE_OPTIONAL, 'a valid AWS secret access key'),
             new InputOption('bucket', null, InputOption::VALUE_OPTIONAL, 'an S3 bucket name'),
             new InputOption('region', null, InputOption::VALUE_OPTIONAL, 'an S3 region, e.g. us-east-1'),
         ];

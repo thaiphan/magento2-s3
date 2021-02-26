@@ -10,14 +10,6 @@
             <resource>Thai_S3::config_s3</resource>
             <group id="general" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
-                <field id="access_key" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Access Key</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                </field>
-                <field id="secret_key" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Secret Key</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                </field>
                 <field id="bucket" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bucket</label>
                 </field>

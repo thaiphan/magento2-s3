@@ -84,10 +84,6 @@ class S3 extends DataObject
         $options = [
             'version' => 'latest',
             'region' => $this->helper->getRegion(),
-            'credentials' => [
-                'key' => $this->helper->getAccessKey(),
-                'secret' => $this->helper->getSecretKey(),
-            ],
         ];
 
         if ($this->helper->getEndpointEnabled()) {

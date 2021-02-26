@@ -3,7 +3,6 @@ namespace Thai\S3\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Thai\S3\Model\MediaStorage\File\Storage;
-use Magento\Framework\Encryption\EncryptorInterface;
 
 /**
  * Helper for config data.
@@ -14,16 +13,6 @@ class Data extends AbstractHelper
      * @var bool
      */
     private $useS3;
-    
-   public function __construct(
-        EncryptorInterface $encryptor,
-        \Magento\Framework\App\Helper\Context $context
-
-    ) {
-        parent::__construct($context);
-        $this->encryptor = $encryptor;
-
-    }
 
     /**
      * Check whether we are allowed to use S3 as our file storage backend.
@@ -38,24 +27,6 @@ class Data extends AbstractHelper
         }
 
         return $this->useS3;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAccessKey()
-    {
-        $accessKey =  $this->scopeConfig->getValue('thai_s3/general/access_key');
-        return $this->encryptor->decrypt($accessKey);
-    }
-
-    /**
-     * @return string
-     */
-    public function getSecretKey()
-    {
-        $secretKey = $this->scopeConfig->getValue('thai_s3/general/secret_key');
-        return $this->encryptor->decrypt($secretKey);
     }
 
     /**

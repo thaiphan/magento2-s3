@@ -82,10 +82,6 @@ class StorageEnableCommand extends Command
                 $options = [
                     'version' => 'latest',
                     'region' => $this->helper->getRegion(),
-                    'credentials' => [
-                        'key' => $this->helper->getAccessKey(),
-                        'secret' => $this->helper->getSecretKey(),
-                    ],
                 ];
 
                 if ($this->helper->getEndpointEnabled()) {
@@ -136,14 +132,6 @@ class StorageEnableCommand extends Command
     public function validate()
     {
         $errors = [];
-
-        if (null === $this->helper->getAccessKey()) {
-            $errors[] = 'You have not provided an AWS access key ID. You can do so using our config script.';
-        }
-
-        if (null === $this->helper->getSecretKey()) {
-            $errors[] = 'You have not provided an AWS secret access key. You can do so using our config script.';
-        }
 
         if (null === $this->helper->getBucket()) {
             $errors[] = 'You have not provided an S3 bucket. You can do so using our config script.';

@@ -56,14 +56,6 @@ class ConfigListCommand extends Command
             $output->writeln('Here are your AWS credentials.');
             $output->writeln('');
             $output->writeln(sprintf(
-                'Access Key ID:     %s',
-                $config->getConfigDataValue('thai_s3/general/access_key')
-            ));
-            $output->writeln(sprintf(
-                'Secret Access Key: %s',
-                $config->getConfigDataValue('thai_s3/general/secret_key')
-            ));
-            $output->writeln(sprintf(
                 'Bucket:            %s',
                 $config->getConfigDataValue('thai_s3/general/bucket')
             ));
