@@ -11,6 +11,9 @@ use Magento\MediaStorage\Model\Config\Source\Storage\Media\Storage;
 class Plugin
 {
     /**
+     * This plugin adds "Amazon S3" to the list of available media storage
+     * options (alongside "database" and "file system") in the system config.
+     *
      * @param Storage $subject
      * @param array $result
      * @return array

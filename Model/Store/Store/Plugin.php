@@ -4,7 +4,7 @@ namespace Thai\S3\Model\Store\Store;
 use Magento\Store\Model\Store;
 
 /**
- * Plugin fot Store.
+ * Plugin for Store.
  *
  * @see Store
  */
